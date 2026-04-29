@@ -1,0 +1,109 @@
+package net.mochinekoserver.guard_villager.manager;
+
+import net.mochinekoserver.guard_villager.Main;
+import net.mochinekoserver.guard_villager.status.GameStatus;
+import net.mochinekoserver.guard_villager.util.PluginUtil;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import javax.annotation.Nonnull;
+
+public class GameManager extends GameBase {
+
+    private static GameManager instance = null;
+
+    public GameManager() {
+        super("Game");
+    }
+
+    public static GameManager getInstance() {
+        if (instance == null) {
+            instance = new GameManager();
+        }
+        return instance;
+    }
+
+    @Override
+    public void initialize() {
+    }
+
+    @Override
+    public void reset() {
+        this.mainTask.cancel();
+        this.mainTask = null;
+        this.time = 0;
+    }
+
+    @Override
+    public int start() {
+        if (status != GameStatus.WAITING) return -1;
+        this.mainTask = new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (status == GameStatus.WAITING || status == GameStatus.COUNTING) {
+                    updateWaitCountScene();
+                }
+                else if (status == GameStatus.RUNNING) {
+                    updateRunningScene();
+                }
+                else if (status == GameStatus.ENDING) {
+                    updateEndingScene();
+                }
+            }
+        }.runTaskTimer(Main.getPlugin(Main.class), 0L, 20L);
+
+        return 0;
+    }
+
+    private void updateWaitCountScene() {
+        if (status != GameStatus.WAITING && status != GameStatus.COUNTING) return;
+        var configManager = ConfigManager.getInstance();
+        var teamManager = TeamManager.getInstance();
+
+        if (countTime <= 0) { //0秒以下
+            //ゲーム開始の処理
+            PluginUtil.sendGlobalInfoMessage("ゲーム開始!");
+            status = GameStatus.RUNNING;
+            teamManager.assignTeam(); //チームを割り当てる
+            for (Player online : Bukkit.getOnlinePlayers()) {
+                var scoreboardManager = ScoreboardManager.getInstance(online.getUniqueId());
+                var joinTeam = teamManager.getJoinGameTeam(online);
+                var teamSpawn = configManager.getTeamSpawnLocation(joinTeam);
+                scoreboardManager.setScoreboard(); //スコアボードを設定する
+                online.teleport(teamSpawn); //チームのスポーンにテレポート
+            }
+        }
+        else {
+            //カウントの処理
+            status = GameStatus.COUNTING;
+            PluginUtil.sendGlobalInfoMessage("ゲーム開始まであと" + countTime + "秒です。");
+            countTime--;
+        }
+    }
+
+    private void updateRunningScene() {
+        if (status != GameStatus.RUNNING) return;
+        time--;
+        if (time <= 0) { //ゲーム時間が0秒以下になった場合
+            status = GameStatus.ENDING;
+        }
+    }
+
+    private void updateEndingScene() {
+        if (status != GameStatus.ENDING) return;
+        PluginUtil.sendGlobalInfoMessage("ゲーム終了!");
+        reset();
+    }
+
+    @Override
+    public void stop() {
+
+    }
+
+    @Override
+    public boolean canStart() {
+        return true;
+    }
+}

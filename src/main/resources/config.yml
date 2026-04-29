@@ -1,0 +1,22 @@
+spawn:
+  world_name: "world"
+  lobby:
+    x:
+    y:
+    z:
+  red:
+    x:
+    y:
+    z:
+  blue:
+    x:
+    y:
+    z:
+
+database:
+  use_database: false
+  host: "localhost"
+  port: 3306
+  db_name: "game"
+  user_name:
+  user_pass:

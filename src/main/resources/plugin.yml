@@ -1,4 +1,22 @@
 name: Guard_Villager
 version: '1.0-SNAPSHOT'
-main: net.mochinekoserver.Guard_Villager
+main: net.mochinekoserver.guard_villager.Main
 api-version: '1.20'
+
+commands:
+  game_start:
+    description: ゲームを開始するコマンド
+    permission: net.mochinekoserver.mc_game_template.game_start
+  game_stop:
+    description: ゲームを停止するコマンド
+    permission: net.mochinekoserver.mc_game_template.game_stop
+  game_team:
+    description: ゲームのチームに関するコマンド
+    permission: net.mochinekoserver.mc_game_template.game_team
+  game_kit:
+    description: キットに関するコマンド
+    permission: net.mochinekoserver.mc_game_template.game_kit
+  suicide:
+    description: 自分をキルするコマンド
+  global:
+    description: 全体メッセージを送るコマンド
