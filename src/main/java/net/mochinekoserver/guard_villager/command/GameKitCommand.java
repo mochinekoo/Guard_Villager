@@ -23,14 +23,14 @@ public class GameKitCommand implements CommandExecutor, TabExecutor {
         if (cmd.getName().equalsIgnoreCase("game_kit")) {
             var kitManager = KitManager.getInstance();
             if (args[0].equalsIgnoreCase("select")) {
-                var player = Bukkit.getPlayer(args[0]);
-                var kit = KitType.valueOf(args[1]);
+                var player = Bukkit.getPlayer(args[1]);
+                var kit = KitType.valueOf(args[2]);
                 kitManager.setKit(player.getUniqueId(), kit.newInstance(player));
                 PluginUtil.sendInfoMessage(send, "キットが設定されました。");
             }
             else if (args[0].equalsIgnoreCase("unselect")) {
-                var player = Bukkit.getPlayer(args[0]);
-                var kit = KitType.valueOf(args[1]);
+                var player = Bukkit.getPlayer(args[1]);
+                var kit = KitType.valueOf(args[2]);
                 kitManager.unSetKit(player.getUniqueId());
                 PluginUtil.sendInfoMessage(send, "キットが解除されました。");
             }
@@ -49,7 +49,7 @@ public class GameKitCommand implements CommandExecutor, TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender send, Command cmd, String s, String[] args) {
-        if (cmd.getName().equalsIgnoreCase("game_team")) {
+        if (cmd.getName().equalsIgnoreCase("game_kit")) {
             if (args.length == 1) {
                 return Arrays.asList("select", "unselect", "list");
             }
