@@ -1,0 +1,4 @@
+name: Guard_Villager
+version: '1.0-SNAPSHOT'
+main: net.mochinekoserver.Guard_Villager
+api-version: '1.20'
