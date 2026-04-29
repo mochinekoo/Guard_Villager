@@ -5,14 +5,19 @@ import net.mochinekoserver.guard_villager.status.GameStatus;
 import net.mochinekoserver.guard_villager.util.PluginUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class GameManager extends GameBase {
 
     private static GameManager instance = null;
+    private final Map<String, Villager> villagerMap = new HashMap<>();
 
     public GameManager() {
         super("Game");
@@ -68,6 +73,14 @@ public class GameManager extends GameBase {
             status = GameStatus.RUNNING;
             teamManager.assignTeam(); //チームを割り当てる
             for (Player online : Bukkit.getOnlinePlayers()) {
+                var villagerCount = configManager.getVillagerSize();
+                var world = configManager.getGameWorld();
+                for (int n = 0; n < villagerCount; n++) { //村人をスポーンさせる処理
+                    var loc = configManager.getSpawnPoint(n);
+                    var villager = world.spawn(loc, Villager.class);
+                    villager.setProfession(Villager.Profession.NONE);
+                    villagerMap.put(String.valueOf(n), villager);
+                }
                 var scoreboardManager = ScoreboardManager.getInstance(online.getUniqueId());
                 var joinTeam = teamManager.getJoinGameTeam(online);
                 var teamSpawn = configManager.getTeamSpawnLocation(joinTeam);

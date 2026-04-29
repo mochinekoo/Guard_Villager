@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.List;
 import java.util.Locale;
 
 public class ConfigManager {
@@ -39,6 +40,21 @@ public class ConfigManager {
         int x = configuration.getInt(team_path + ".x");
         int y = configuration.getInt(team_path + ".y");
         int z = configuration.getInt(team_path + ".z");
+        return new Location(getGameWorld(), x, y, z);
+    }
+
+    public int getVillagerSize() {
+        String path = "game.villager_size";
+        return configuration.getInt(path);
+    }
+
+    public Location getSpawnPoint(int index) {
+        String path = "game.spawn_point";
+        List<List<Integer>> spawnPointList = (List<List<Integer>>) configuration.getList(path);
+        List<Integer> spawnPoint = spawnPointList.get(index);
+        int x = spawnPoint.get(0);
+        int y = spawnPoint.get(1);
+        int z = spawnPoint.get(2);
         return new Location(getGameWorld(), x, y, z);
     }
 

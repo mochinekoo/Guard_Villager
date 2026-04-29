@@ -1,3 +1,7 @@
+game:
+  villager_size: 4
+  spawn_point: [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+
 spawn:
   world_name: "world"
   lobby:
