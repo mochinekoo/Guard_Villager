@@ -1,13 +1,15 @@
 package net.mochinekoserver.guard_villager.status;
 
+import net.mochinekoserver.guard_villager.kit.TestKit;
 import net.mochinekoserver.guard_villager.manager.KitBase;
 import org.bukkit.OfflinePlayer;
 
 import javax.annotation.Nonnull;
+import java.util.UUID;
 
 public enum KitType {
 
-    ;
+    TEST_KIT(TestKit.class);
 
     private final Class<? extends KitBase> kit_class;
 
@@ -22,7 +24,7 @@ public enum KitType {
 
     public KitBase newInstance(@Nonnull OfflinePlayer player) {
         try {
-            return kit_class.getDeclaredConstructor(OfflinePlayer.class).newInstance(player);
+            return kit_class.getDeclaredConstructor(UUID.class).newInstance(player.getUniqueId());
         } catch (Exception e) {
             e.printStackTrace();
         }

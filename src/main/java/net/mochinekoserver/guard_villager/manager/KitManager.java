@@ -26,6 +26,9 @@ public class KitManager {
     public void setKit(@Nonnull UUID uuid, @Nonnull KitBase kit) {
         OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
         kit_map.put(uuid, kit);
+        if (player.isOnline()) {
+            kit_map.get(player.getUniqueId()).addKitItem();
+        }
     }
 
     public void unSetKit(@Nonnull UUID uuid) {

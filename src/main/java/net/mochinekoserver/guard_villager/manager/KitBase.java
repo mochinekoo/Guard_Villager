@@ -22,6 +22,9 @@ public abstract class KitBase {
         return kitType;
     }
 
+    public abstract void runClickAction();
+    public abstract void addKitItem();
+
     public abstract void release();
 
 }
