@@ -38,8 +38,10 @@ public class GameManager extends GameBase {
 
     @Override
     public void reset() {
-        this.mainTask.cancel();
-        this.mainTask = null;
+        if (this.mainTask != null) {
+            this.mainTask.cancel();
+            this.mainTask = null;
+        }
         this.time = 0;
     }
 
