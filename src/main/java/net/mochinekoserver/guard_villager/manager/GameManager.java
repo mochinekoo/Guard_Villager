@@ -1,5 +1,7 @@
 package net.mochinekoserver.guard_villager.manager;
 
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.mochinekoserver.guard_villager.Main;
 import net.mochinekoserver.guard_villager.status.GameStatus;
 import net.mochinekoserver.guard_villager.util.PluginUtil;
@@ -99,6 +101,15 @@ public class GameManager extends GameBase {
     private void updateRunningScene() {
         if (status != GameStatus.RUNNING) return;
         time--;
+
+        for (Player player : Bukkit.getOnlinePlayers()) { //全プレイヤーの処理
+            var spigot = player.spigot();
+            var kitManager = KitManager.getInstance();
+            var kit = kitManager.getKit(player.getUniqueId());
+            if (kit == null) return;
+            spigot.sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("現在のコイン：" + kit.getCoin()));
+        }
+
         if (time <= 0) { //ゲーム時間が0秒以下になった場合
             status = GameStatus.ENDING;
         }

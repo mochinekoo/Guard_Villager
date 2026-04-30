@@ -45,6 +45,10 @@ public final class Main extends JavaPlugin {
         }
     }
 
+    public void releasePlugin() {
+
+    }
+
     private void initCommand() {
         var startstop_command = new GameStartStopCommand();
         var team_command = new GameTeamCommand();

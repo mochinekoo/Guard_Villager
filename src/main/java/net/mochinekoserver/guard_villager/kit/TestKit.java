@@ -1,5 +1,6 @@
 package net.mochinekoserver.guard_villager.kit;
 
+import net.mochinekoserver.guard_villager.Main;
 import net.mochinekoserver.guard_villager.manager.ConfigManager;
 import net.mochinekoserver.guard_villager.manager.KitBase;
 import net.mochinekoserver.guard_villager.status.ItemType;
@@ -9,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Snowball;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -26,6 +28,8 @@ public class TestKit extends KitBase {
         var loc = player.getEyeLocation().clone();
         var direction = loc.getDirection().normalize().clone();
         var snowball = world.spawn(loc, Snowball.class);
+        snowball.setMetadata("game_entity", new FixedMetadataValue(Main.getPlugin(Main.class), true));
+        snowball.setMetadata("player_uuid", new FixedMetadataValue(Main.getPlugin(Main.class), player.getUniqueId().toString()));
         snowball.setVelocity(direction.multiply(1.5));
     }
 

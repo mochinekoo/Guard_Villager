@@ -8,10 +8,12 @@ public abstract class KitBase {
 
     protected final UUID uuid;
     protected final KitType kitType;
+    protected int coin;
 
     public KitBase(UUID uuid, KitType kitType) {
         this.uuid = uuid;
         this.kitType = kitType;
+        this.coin = 0;
     }
 
     public UUID getUUID() {
@@ -20,6 +22,15 @@ public abstract class KitBase {
 
     public KitType getKitType() {
         return kitType;
+    }
+
+    public int getCoin() {
+        return coin;
+    }
+
+    public void setCoin(int coin) {
+        if (coin < 0) coin = 0;
+        this.coin = coin;
     }
 
     public abstract void runClickAction();
