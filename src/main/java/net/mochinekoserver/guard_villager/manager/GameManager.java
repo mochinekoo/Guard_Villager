@@ -6,8 +6,10 @@ import net.mochinekoserver.guard_villager.Main;
 import net.mochinekoserver.guard_villager.status.GameStatus;
 import net.mochinekoserver.guard_villager.util.PluginUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -38,10 +40,22 @@ public class GameManager extends GameBase {
 
     @Override
     public void reset() {
+        var configManager = ConfigManager.getInstance();
+
         if (this.mainTask != null) {
             this.mainTask.cancel();
             this.mainTask = null;
         }
+
+        for (Entity entity : configManager.getGameWorld().getEntities()) {
+            if (!entity.hasMetadata("game_entity")) continue;
+            var gameEntityMeta = entity.getMetadata("game_entity");
+            var IsGameEntity = gameEntityMeta.get(0).asBoolean(); //ゲームエンティティを削除
+            if (IsGameEntity) {
+                entity.remove();
+            }
+        }
+
         this.time = 0;
     }
 
@@ -83,6 +97,7 @@ public class GameManager extends GameBase {
                     var loc = configManager.getSpawnPoint(n);
                     var villager = world.spawn(loc, Villager.class);
                     villager.setProfession(Villager.Profession.NONE);
+                    villager.setMetadata("game_entity", new FixedMetadataValue(Main.getPlugin(Main.class), true));
                     villagerMap.put(String.valueOf(n), villager);
                 }
                 var scoreboardManager = ScoreboardManager.getInstance(online.getUniqueId());
