@@ -6,6 +6,7 @@ import net.mochinekoserver.guard_villager.status.GameStatus;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.EntityType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -13,6 +14,7 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
 import javax.annotation.Nonnull;
+import java.awt.*;
 import java.io.Closeable;
 import java.util.HashMap;
 import java.util.Map;
@@ -98,8 +100,8 @@ public class ScoreboardManager {
             player_obj.getScore("===============").setScore(30);
             player_obj.getScore("  ").setScore(29);
             // player_obj.getScore("残り時間: " + time).setScore(28);
-            //player_obj.getScore(ChatColor.RED + "赤：" + ChatColor.GOLD + "").setScore(27);
-            //player_obj.getScore(ChatColor.BLUE + "青：" + ChatColor.GOLD + "").setScore(26);
+            //player_obj.getScore(ChatColor.GOLD + "村人の数：" + ChatColor.WHITE + "").setScore(27);
+            //player_obj.getScore(ChatColor.GOLD + "残りのエンティティ：" + ChatColor.WHITE + "").setScore(26);
             player_obj.getScore(" ").setScore(25);
             player_obj.getScore("============").setScore(24);
         }
@@ -127,11 +129,34 @@ public class ScoreboardManager {
                 @Override
                 public void run() {
                     var gameManager = GameManager.getInstance();
+                    var configManager = ConfigManager.getInstance();
+                    var gameWorld = configManager.getGameWorld();
                     var gameStatus = gameManager.getStatus();
                     if (gameStatus == GameStatus.WAITING) {
                         getScore(26).updateScore(ChatColor.GOLD + "現在の人数：" + Bukkit.getOnlinePlayers().size());
                     }
                     else if (gameStatus == GameStatus.RUNNING) {
+                        var villagerCount = gameWorld.getEntities().stream()
+                                .filter(entity -> entity.getType() == EntityType.VILLAGER)
+                                .filter(entity -> {
+                                    var meta = entity.getMetadata("game_entity");
+                                    if (!meta.isEmpty()) {
+                                        return meta.get(0).asBoolean();
+                                    }
+                                    return false;
+                                }).count();
+                        var allEntity = gameWorld.getEntities().stream()
+                                .filter(entity -> entity.getType() != EntityType.VILLAGER)
+                                .filter(entity -> {
+                                    var meta = entity.getMetadata("game_entity");
+                                    if (!meta.isEmpty()) {
+                                        return meta.get(0).asBoolean();
+                                    }
+                                    return false;
+                                }).count();
+                        getScore(27).updateScore(ChatColor.GOLD + "村人の数：" + ChatColor.WHITE + villagerCount);
+                        getScore(26).updateScore(ChatColor.GOLD + "残りのエンティティ：" + ChatColor.WHITE + allEntity);
+
                         getScore(28).updateScore("残り時間：" + String.format("%02d:%02d", gameManager.getTime() / 60, gameManager.getTime() % 60));
                     }
                     else if (gameStatus == GameStatus.ENDING) {
