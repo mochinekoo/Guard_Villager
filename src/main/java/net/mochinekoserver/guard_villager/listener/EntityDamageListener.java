@@ -21,7 +21,7 @@ public class EntityDamageListener implements Listener {
         var damager = event.getDamager(); //ダメージを与えた人
         var cause = event.getCause();
 
-        if (damage instanceof Player damagePlayer && damager instanceof Player damagerPlayer) {
+        if (damage instanceof Player damagePlayer && damager instanceof Player damagerPlayer) { //ダメージを与えた/受けた人がプレイヤー
             var teamManager = TeamManager.getInstance();
             var damageTeam = teamManager.getJoinGameTeam(damagePlayer);
             var damagerTeam = teamManager.getJoinGameTeam(damagerPlayer);
@@ -31,7 +31,16 @@ public class EntityDamageListener implements Listener {
             }
         }
 
-        if (damager instanceof Snowball damagerSnowBall) {
+        if (damage instanceof Villager damageVillager) { //ダメージを受けた人が村人
+            var IsGameEntity = damageVillager.getMetadata("game_entity").get(0).asBoolean();
+            if (!IsGameEntity) return; //ゲームエンティティでない場合は飛ばす
+
+            if (damager instanceof Player damagerPlayer) { //ダメージを受けた人が村人で、与えた人がプレイヤーの場合、キャンセル
+                event.setCancelled(true);
+            }
+        }
+
+        if (damager instanceof Snowball damagerSnowBall) { //ダメージを与えた人が雪玉
             var IsGameEntity = damagerSnowBall.getMetadata("game_entity").get(0).asBoolean();
             if (!IsGameEntity) return; //ゲームエンティティでない場合は飛ばす
 
